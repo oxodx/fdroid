@@ -9,12 +9,12 @@ GitHub Pages.
 Clients use:
 
 ```text
-https://fdroid.oxod.nl/repo
+https://fdroid.oxod.nl
 ```
 
 Point the Cloudflare DNS record for `fdroid.oxod.nl` at `oxodx.github.io` and
 keep it **DNS only** while GitHub validates the domain. The repository variable
-`FDROID_REPO_URL` is set to `https://fdroid.oxod.nl/repo` so generated F-Droid
+`FDROID_REPO_URL` is set to `https://fdroid.oxod.nl` so generated F-Droid
 metadata advertises the custom URL.
 
 ## Initial GitHub configuration

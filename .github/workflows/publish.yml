@@ -17,7 +17,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     env:
-      FDROID_REPO_URL: ${{ vars.FDROID_REPO_URL || 'https://fdroid.oxod.nl/repo' }}
+      FDROID_REPO_URL: ${{ vars.FDROID_REPO_URL || 'https://fdroid.oxod.nl' }}
       FDROID_KEYSTORE_BASE64: ${{ secrets.FDROID_KEYSTORE_BASE64 }}
       FDROID_KEYSTORE_PASSWORD: ${{ secrets.FDROID_KEYSTORE_PASSWORD }}
       FDROID_KEY_ALIAS: ${{ secrets.FDROID_KEY_ALIAS }}
@@ -56,7 +56,7 @@ jobs:
       - name: Create public Pages artifact
         run: |
           mkdir -p _site
-          cp -a repo _site/repo
+          cp -a repo/. _site/
           cp CNAME _site/CNAME
 
       - uses: actions/configure-pages@v5
