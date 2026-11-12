@@ -1,6 +1,6 @@
-# Oxod F-Droid Repository
+# oxod F-Droid Repository
 
-Install and update Oxod Android apps through your F-Droid client.
+Install and update oxod Android apps through your F-Droid client.
 
 ## Add the repository
 
@@ -14,7 +14,7 @@ Install and update Oxod Android apps through your F-Droid client.
 
 4. Confirm the repository, then refresh your app list.
 
-Search for **Magister Native** to install it. Keep the Oxod repository enabled
+Search for **Magister Native** to install it. Keep the oxod repository enabled
 to receive future updates through F-Droid.
 
 ## Available apps
