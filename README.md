@@ -6,18 +6,16 @@ GitHub Pages.
 
 ## Repository URL
 
-Until a custom domain is configured, clients use:
+Clients use:
 
 ```text
-https://oxodx.github.io/fdroid/repo
+https://fdroid.oxod.nl/repo
 ```
 
-To use a Cloudflare hostname, first set that hostname as the repository's
-custom domain in **GitHub → Settings → Pages**. Point the Cloudflare DNS record
-at `oxodx.github.io` and keep it **DNS only** while GitHub validates the
-domain. Then set the repository variable `FDROID_REPO_URL` to
-`https://your-domain.example/repo` so generated F-Droid metadata advertises
-the custom URL.
+Point the Cloudflare DNS record for `fdroid.oxod.nl` at `oxodx.github.io` and
+keep it **DNS only** while GitHub validates the domain. The repository variable
+`FDROID_REPO_URL` is set to `https://fdroid.oxod.nl/repo` so generated F-Droid
+metadata advertises the custom URL.
 
 ## Initial GitHub configuration
 
@@ -49,9 +47,9 @@ Commit and push the APK. The Pages workflow rebuilds the shared repository
 index, so every app remains available under the same URL.
 
 Each app's release workflow can automate this by cloning `oxodx/fdroid`,
-copying its signed APK into `repo/`, and pushing with a fine-grained GitHub
-token that has **Contents: Read and write** access only to `oxodx/fdroid`.
+copying its signed APK into `repo/`, and pushing with a repository-scoped SSH
+deploy key that has write access only to `oxodx/fdroid`.
 
-For Magister, save that token as the `FDROID_REPOSITORY_TOKEN` secret in the
+For Magister, save that private key as the `FDROID_DEPLOY_KEY` secret in the
 `oxodx/magister` repository. Its release workflow publishes each signed APK to
 this repository automatically.

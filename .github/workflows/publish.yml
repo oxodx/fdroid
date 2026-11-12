@@ -17,7 +17,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     env:
-      FDROID_REPO_URL: ${{ vars.FDROID_REPO_URL || format('https://{0}.github.io/{1}/repo', github.repository_owner, github.event.repository.name) }}
+      FDROID_REPO_URL: ${{ vars.FDROID_REPO_URL || 'https://fdroid.oxod.nl/repo' }}
       FDROID_KEYSTORE_BASE64: ${{ secrets.FDROID_KEYSTORE_BASE64 }}
       FDROID_KEYSTORE_PASSWORD: ${{ secrets.FDROID_KEYSTORE_PASSWORD }}
       FDROID_KEY_ALIAS: ${{ secrets.FDROID_KEY_ALIAS }}
@@ -54,6 +54,7 @@ jobs:
         run: |
           mkdir -p _site
           cp -a repo _site/repo
+          cp CNAME _site/CNAME
 
       - uses: actions/configure-pages@v5
 
@@ -63,4 +64,3 @@ jobs:
 
       - id: deployment
         uses: actions/deploy-pages@v4
-
