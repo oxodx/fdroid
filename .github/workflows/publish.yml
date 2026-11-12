@@ -1,0 +1,66 @@
+name: Publish F-Droid repository
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      FDROID_REPO_URL: ${{ vars.FDROID_REPO_URL || format('https://{0}.github.io/{1}/repo', github.repository_owner, github.event.repository.name) }}
+      FDROID_KEYSTORE_BASE64: ${{ secrets.FDROID_KEYSTORE_BASE64 }}
+      FDROID_KEYSTORE_PASSWORD: ${{ secrets.FDROID_KEYSTORE_PASSWORD }}
+      FDROID_KEY_ALIAS: ${{ secrets.FDROID_KEY_ALIAS }}
+      FDROID_KEY_PASSWORD: ${{ secrets.FDROID_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install F-Droid repository tools
+        run: pip install --disable-pip-version-check fdroidserver==2.4.5
+
+      - name: Configure signing
+        run: |
+          test -n "$FDROID_KEYSTORE_BASE64"
+          test -n "$FDROID_KEYSTORE_PASSWORD"
+          test -n "$FDROID_KEY_ALIAS"
+          test -n "$FDROID_KEY_PASSWORD"
+          printf '%s' "$FDROID_KEYSTORE_BASE64" | base64 --decode > fdroid-repo.keystore
+          printf '%s\n' 'repo_name: Oxod F-Droid Repository' > config.yml
+          printf '%s\n' 'repo_description: Android apps published by Oxod.' >> config.yml
+          printf 'repo_url: %s\n' "$FDROID_REPO_URL" >> config.yml
+          printf '%s\n' 'keystore: fdroid-repo.keystore' >> config.yml
+          printf 'keystorepass: %s\n' "$FDROID_KEYSTORE_PASSWORD" >> config.yml
+          printf 'keyalias: %s\n' "$FDROID_KEY_ALIAS" >> config.yml
+          printf 'keypass: %s\n' "$FDROID_KEY_PASSWORD" >> config.yml
+
+      - name: Build repository index
+        run: fdroid update --pretty
+
+      - name: Create public Pages artifact
+        run: |
+          mkdir -p _site
+          cp -a repo _site/repo
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
+

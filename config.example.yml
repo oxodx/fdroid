@@ -1,0 +1,6 @@
+repo_name: Oxod F-Droid Repository
+repo_description: Android apps published by Oxod.
+repo_url: https://oxodx.github.io/fdroid/repo
+keystore: fdroid-repo.keystore
+keyalias: fdroidrepo
+

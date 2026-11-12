@@ -1,0 +1,5 @@
+.fdroid/
+_site/
+config.yml
+fdroid-repo.keystore
+
