@@ -17,7 +17,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     env:
-      FDROID_REPO_URL: ${{ vars.FDROID_REPO_URL || 'https://fdroid.oxod.nl' }}
       FDROID_KEYSTORE_BASE64: ${{ secrets.FDROID_KEYSTORE_BASE64 }}
       FDROID_KEYSTORE_PASSWORD: ${{ secrets.FDROID_KEYSTORE_PASSWORD }}
       FDROID_KEY_ALIAS: ${{ secrets.FDROID_KEY_ALIAS }}
@@ -54,14 +53,20 @@ jobs:
           test -n "$FDROID_KEY_ALIAS"
           test -n "$FDROID_KEY_PASSWORD"
           printf '%s' "$FDROID_KEYSTORE_BASE64" | base64 --decode > fdroid-repo.keystore
-          printf '%s\n' 'repo_name: Oxod F-Droid Repository' > config.yml
-          printf '%s\n' 'repo_description: Android apps published by Oxod.' >> config.yml
-          printf 'repo_url: %s\n' "$FDROID_REPO_URL" >> config.yml
-          printf '%s\n' 'keystore: fdroid-repo.keystore' >> config.yml
-          printf 'keystorepass: %s\n' "$FDROID_KEYSTORE_PASSWORD" >> config.yml
-          printf 'repo_keyalias: %s\n' "$FDROID_KEY_ALIAS" >> config.yml
-          printf 'keypass: %s\n' "$FDROID_KEY_PASSWORD" >> config.yml
           chmod 600 config.yml
+          chmod 600 fdroid-repo.keystore
+
+      - name: Download app releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p repo
+          for release in releases/*.json; do
+            repository=$(jq -er '.repository' "$release")
+            tag=$(jq -er '.tag' "$release")
+            asset=$(jq -er '.asset' "$release")
+            gh release download "$tag" --repo "$repository" --pattern "$asset" --dir repo
+          done
 
       - name: Build repository index
         run: |
@@ -72,7 +77,6 @@ jobs:
         run: |
           mkdir -p _site
           cp -a repo/. _site/
-          cp CNAME _site/CNAME
 
       - uses: actions/configure-pages@v5
 

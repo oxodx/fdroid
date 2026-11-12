@@ -1,0 +1,16 @@
+---
+Categories:
+  - Education
+License: Unknown
+AuthorName: oxod
+SourceCode: https://github.com/oxodx/magister
+IssueTracker: https://github.com/oxodx/magister/issues
+Changelog: https://github.com/oxodx/magister/releases
+Name: Magister Native
+Summary: Native Android client for Magister school accounts
+Description: |-
+  View your Magister schedule, grades, assignments, attendance,
+  messages and digital textbooks. Requires a school Magister account.
+AntiFeatures:
+  NonFreeNet:
+    en-US: Requires the proprietary Magister school service.

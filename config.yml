@@ -1,0 +1,10 @@
+---
+sdk_path: $ANDROID_HOME
+repo_url: https://fdroid.oxod.nl
+repo_name: Oxod F-Droid Repository
+repo_description: Android apps published by Oxod.
+archive_older: 0
+keystore: fdroid-repo.keystore
+keystorepass: {env: FDROID_KEYSTORE_PASSWORD}
+repo_keyalias: {env: FDROID_KEY_ALIAS}
+keypass: {env: FDROID_KEY_PASSWORD}

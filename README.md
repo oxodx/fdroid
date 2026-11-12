@@ -1,59 +1,23 @@
 # Oxod F-Droid Repository
 
-This is the single F-Droid-compatible repository for Oxod Android apps. APKs
-live in `repo/`; GitHub Actions signs the repository index and deploys it with
-GitHub Pages.
+Install and update Oxod Android apps through your F-Droid client.
 
-## Repository URL
+## Add the repository
 
-Clients use:
+1. Open F-Droid on your Android device.
+2. Go to **Settings → Repositories** and tap **+**.
+3. Enter this repository address:
 
-```text
-https://fdroid.oxod.nl
-```
+   ```text
+   https://fdroid.oxod.nl
+   ```
 
-Point the Cloudflare DNS record for `fdroid.oxod.nl` at `oxodx.github.io` and
-keep it **DNS only** while GitHub validates the domain. The repository variable
-`FDROID_REPO_URL` is set to `https://fdroid.oxod.nl` so generated F-Droid
-metadata advertises the custom URL.
+4. Confirm the repository, then refresh your app list.
 
-F-Droid server 2.4.5 requires URLs to end in `/repo`. The workflow applies a
-checked compatibility patch to also permit a domain root before generating
-and signing indexes. Pages publishes the APKs and indexes at that root.
+Search for **Magister Native** to install it. Keep the Oxod repository enabled
+to receive future updates through F-Droid.
 
-## Initial GitHub configuration
+## Available apps
 
-1. Create the GitHub repository `oxodx/fdroid` and push this local repository.
-2. In **Settings → Pages**, choose **GitHub Actions** as the source.
-3. Generate an Android keystore dedicated to this F-Droid repository; keep it
-   stable, because clients use it to verify repository updates.
-4. Add these repository secrets: `FDROID_KEYSTORE_BASE64`,
-   `FDROID_KEYSTORE_PASSWORD`, `FDROID_KEY_ALIAS`, and
-   `FDROID_KEY_PASSWORD`.
-5. Run **Publish F-Droid repository** once to create the initial index.
-
-## Add an app release
-
-Build and sign the APK in its app repository, then add it here using this
-filename format:
-
-```text
-repo/<application-id>_<version-code>.apk
-```
-
-For Magister, that becomes:
-
-```text
-repo/nl.oxod.magister_1000000001.apk
-```
-
-Commit and push the APK. The Pages workflow rebuilds the shared repository
-index, so every app remains available under the same URL.
-
-Each app's release workflow can automate this by cloning `oxodx/fdroid`,
-copying its signed APK into `repo/`, and pushing with a repository-scoped SSH
-deploy key that has write access only to `oxodx/fdroid`.
-
-For Magister, save that private key as the `FDROID_DEPLOY_KEY` secret in the
-`oxodx/magister` repository. Its release workflow publishes each signed APK to
-this repository automatically.
+- [Magister Native](https://github.com/oxodx/magister): access your school
+  schedule, grades, assignments, messages, and more. Requires a Magister account.
