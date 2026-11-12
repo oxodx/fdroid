@@ -44,11 +44,14 @@ jobs:
           printf 'repo_url: %s\n' "$FDROID_REPO_URL" >> config.yml
           printf '%s\n' 'keystore: fdroid-repo.keystore' >> config.yml
           printf 'keystorepass: %s\n' "$FDROID_KEYSTORE_PASSWORD" >> config.yml
-          printf 'keyalias: %s\n' "$FDROID_KEY_ALIAS" >> config.yml
+          printf 'repo_keyalias: %s\n' "$FDROID_KEY_ALIAS" >> config.yml
           printf 'keypass: %s\n' "$FDROID_KEY_PASSWORD" >> config.yml
+          chmod 600 config.yml
 
       - name: Build repository index
-        run: fdroid update --pretty
+        run: |
+          mkdir -p repo
+          fdroid update --pretty
 
       - name: Create public Pages artifact
         run: |
