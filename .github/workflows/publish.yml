@@ -32,6 +32,21 @@ jobs:
       - name: Install F-Droid repository tools
         run: pip install --disable-pip-version-check fdroidserver==2.4.5
 
+      - name: Allow repository at domain root
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import fdroidserver.common
+
+          source_path = Path(fdroidserver.common.__file__)
+          source = source_path.read_text()
+          original = "if not config['repo_url'].endswith('/repo'):"
+          replacement = "if not config['repo_url'].endswith('/repo') and urlparse(config['repo_url']).path not in ('', '/'):"
+          if source.count(original) != 1:
+              raise SystemExit('F-Droid URL validation changed; review root URL support')
+          source_path.write_text(source.replace(original, replacement))
+          PY
+
       - name: Configure signing
         run: |
           test -n "$FDROID_KEYSTORE_BASE64"

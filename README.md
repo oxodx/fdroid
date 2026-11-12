@@ -17,6 +17,10 @@ keep it **DNS only** while GitHub validates the domain. The repository variable
 `FDROID_REPO_URL` is set to `https://fdroid.oxod.nl` so generated F-Droid
 metadata advertises the custom URL.
 
+F-Droid server 2.4.5 requires URLs to end in `/repo`. The workflow applies a
+checked compatibility patch to also permit a domain root before generating
+and signing indexes. Pages publishes the APKs and indexes at that root.
+
 ## Initial GitHub configuration
 
 1. Create the GitHub repository `oxodx/fdroid` and push this local repository.
