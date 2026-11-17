@@ -3,9 +3,9 @@ Categories:
   - Education
 License: Unknown
 AuthorName: oxod
-SourceCode: https://github.com/oxodx/magister
-IssueTracker: https://github.com/oxodx/magister/issues
-Changelog: https://github.com/oxodx/magister/releases
+SourceCode: https://git.oxod.nl/oxod/magister
+IssueTracker: https://git.oxod.nl/oxod/magister/issues
+Changelog: https://git.oxod.nl/oxod/magister/releases
 Name: Magister Native
 Summary: Native Android client for Magister school accounts
 Description: |-

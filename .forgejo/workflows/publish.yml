@@ -7,24 +7,21 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     env:
       FDROID_KEYSTORE_BASE64: ${{ secrets.FDROID_KEYSTORE_BASE64 }}
       FDROID_KEYSTORE_PASSWORD: ${{ secrets.FDROID_KEYSTORE_PASSWORD }}
       FDROID_KEY_ALIAS: ${{ secrets.FDROID_KEY_ALIAS }}
       FDROID_KEY_PASSWORD: ${{ secrets.FDROID_KEY_PASSWORD }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: https://data.forgejo.org/actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: https://data.forgejo.org/actions/setup-python@v5
         with:
           python-version: '3.12'
 
@@ -56,24 +53,32 @@ jobs:
           chmod 600 config.yml
           chmod 600 fdroid-repo.keystore
 
-      - name: Download app releases
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Read Magister release metadata
+        id: magister
         run: |
-          mkdir -p repo
-          for release in releases/*.json; do
-            repository=$(jq -er '.repository' "$release")
-            tag=$(jq -er '.tag' "$release")
-            asset=$(jq -er '.asset' "$release")
-            gh release download "$tag" --repo "$repository" --pattern "$asset" --dir repo
-          done
+          release=releases/nl.oxod.magister.json
+          echo "url=$(jq -er '.url' "$release")" >> "$FORGEJO_OUTPUT"
+          echo "repository=$(jq -er '.repository' "$release")" >> "$FORGEJO_OUTPUT"
+          echo "tag=$(jq -er '.tag' "$release")" >> "$FORGEJO_OUTPUT"
+          echo "asset=$(jq -er '.asset' "$release")" >> "$FORGEJO_OUTPUT"
+
+      - name: Download Magister release
+        uses: https://data.forgejo.org/actions/forgejo-release@v2.13.4
+        with:
+          direction: download
+          url: ${{ steps.magister.outputs.url }}
+          repo: ${{ steps.magister.outputs.repository }}
+          tag: ${{ steps.magister.outputs.tag }}
+          release-dir: repo
+          token: ${{ forgejo.token }}
+
+      - name: Verify release asset
+        run: test -f "repo/${{ steps.magister.outputs.asset }}"
 
       - name: Build repository index
-        run: |
-          mkdir -p repo
-          fdroid update --pretty
+        run: fdroid update --pretty
 
-      - name: Create public Pages artifact
+      - name: Create public repository
         run: |
           mkdir -p _site
           cp -a repo/. _site/
@@ -81,11 +86,18 @@ jobs:
           cp -a repo/. _site/fdroid/repo/
           cp -a repo/. _site/repo/
 
-      - uses: actions/configure-pages@v5
-
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload repository artifact
+        uses: https://data.forgejo.org/actions/upload-artifact@v3
         with:
+          name: fdroid-repository
           path: _site
 
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Publish repository
+        uses: https://data.forgejo.org/actions/git-pages@v2
+        with:
+          site: https://pages.oxod.nl/fdroid/
+          server: pages.oxod.nl
+          token: ${{ forgejo.token }}
+          source: _site/
+          strict: true
+          comment: ${{ forgejo.sha }}

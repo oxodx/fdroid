@@ -19,5 +19,5 @@ to receive future updates through F-Droid.
 
 ## Available apps
 
-- [Magister Native](https://github.com/oxodx/magister): access your school
+- [Magister Native](https://git.oxod.nl/oxod/magister): access your school
   schedule, grades, assignments, messages, and more. Requires a Magister account.
