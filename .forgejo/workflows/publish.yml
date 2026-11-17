@@ -57,10 +57,10 @@ jobs:
         id: magister
         run: |
           release=releases/nl.oxod.magister.json
-          echo "url=$(jq -er '.url' "$release")" >> "$FORGEJO_OUTPUT"
-          echo "repository=$(jq -er '.repository' "$release")" >> "$FORGEJO_OUTPUT"
-          echo "tag=$(jq -er '.tag' "$release")" >> "$FORGEJO_OUTPUT"
-          echo "asset=$(jq -er '.asset' "$release")" >> "$FORGEJO_OUTPUT"
+          echo "url=$(jq -er '.url' "$release")" >> "$GITHUB_OUTPUT"
+          echo "repository=$(jq -er '.repository' "$release")" >> "$GITHUB_OUTPUT"
+          echo "tag=$(jq -er '.tag' "$release")" >> "$GITHUB_OUTPUT"
+          echo "asset=$(jq -er '.asset' "$release")" >> "$GITHUB_OUTPUT"
 
       - name: Download Magister release
         uses: https://data.forgejo.org/actions/forgejo-release@v2.13.4
@@ -70,7 +70,7 @@ jobs:
           repo: ${{ steps.magister.outputs.repository }}
           tag: ${{ steps.magister.outputs.tag }}
           release-dir: repo
-          token: ${{ forgejo.token }}
+          token: ${{ github.token }}
 
       - name: Verify release asset
         run: test -f "repo/${{ steps.magister.outputs.asset }}"
@@ -97,7 +97,7 @@ jobs:
         with:
           site: https://pages.oxod.nl/fdroid/
           server: pages.oxod.nl
-          token: ${{ forgejo.token }}
+          token: ${{ github.token }}
           source: _site/
           strict: true
-          comment: ${{ forgejo.sha }}
+          comment: ${{ github.sha }}
