@@ -20,13 +20,13 @@ jobs:
       - name: Checkout
         uses: https://data.forgejo.org/actions/checkout@v4
 
-      - name: Set up Python
-        uses: https://data.forgejo.org/actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
       - name: Install F-Droid repository tools
-        run: pip install --disable-pip-version-check fdroidserver==2.4.5
+        run: |
+          apt-get update
+          apt-get install --yes python3-pip python3-venv
+          python3 -m venv .venv
+          .venv/bin/pip install --disable-pip-version-check fdroidserver==2.4.5
+          echo "$GITHUB_WORKSPACE/.venv/bin" >> "$GITHUB_PATH"
 
       - name: Allow repository at domain root
         run: |
@@ -63,14 +63,14 @@ jobs:
           echo "asset=$(jq -er '.asset' "$release")" >> "$GITHUB_OUTPUT"
 
       - name: Download Magister release
-        uses: https://data.forgejo.org/actions/forgejo-release@v2.13.4
-        with:
-          direction: download
-          url: ${{ steps.magister.outputs.url }}
-          repo: ${{ steps.magister.outputs.repository }}
-          tag: ${{ steps.magister.outputs.tag }}
-          release-dir: repo
-          token: ${{ github.token }}
+        run: |
+          release_url="${{ steps.magister.outputs.url }}/api/v1/repos/${{ steps.magister.outputs.repository }}/releases/tags/${{ steps.magister.outputs.tag }}"
+          asset_url=$(curl --fail --silent --show-error "$release_url" \
+            | jq -er --arg asset "${{ steps.magister.outputs.asset }}" \
+                '.assets[] | select(.name == $asset) | .browser_download_url')
+          mkdir -p repo
+          curl --fail --location --silent --show-error "$asset_url" \
+            --output "repo/${{ steps.magister.outputs.asset }}"
 
       - name: Verify release asset
         run: test -f "repo/${{ steps.magister.outputs.asset }}"
