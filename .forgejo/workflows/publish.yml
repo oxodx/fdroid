@@ -23,7 +23,7 @@ jobs:
       - name: Install F-Droid repository tools
         run: |
           apt-get update
-          apt-get install --yes python3-pip python3-venv
+          apt-get install --yes python3-pip python3-venv jq default-jdk-headless
           python3 -m venv .venv
           .venv/bin/pip install --disable-pip-version-check fdroidserver==2.4.5
           echo "$GITHUB_WORKSPACE/.venv/bin" >> "$GITHUB_PATH"
